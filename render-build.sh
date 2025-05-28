@@ -1,6 +1,3 @@
 #!/bin/bash
-# Make mvnw executable
-chmod +x mvnw
-
-# Build the application
-./mvnw clean package -DskipTests
+# This file is intentionally left empty as the buildpack will handle the build
+echo "Using Heroku Java buildpack for building the application"
