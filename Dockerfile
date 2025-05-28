@@ -1,14 +1,14 @@
 # Use OpenJDK 17 as the base image
-FROM maven:3.8.6-openjdk-17 AS build
+FROM maven:3.8.6-jdk-17 AS build
 
 # Set working directory
 WORKDIR /app
 
 # Copy only the files needed for the build
-COPY backend/pom.xml .
-COPY backend/mvnw .
-COPY backend/.mvn/ .mvn/
-COPY backend/src ./src
+COPY pom.xml .
+COPY mvnw .
+COPY .mvn/ .mvn/
+COPY src ./src
 
 # Build the application
 RUN chmod +x mvnw
