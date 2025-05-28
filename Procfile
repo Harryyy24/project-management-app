@@ -1,1 +1,0 @@
-web: java $JAVA_OPTS -Dserver.port=$PORT -Dserver.address=0.0.0.0 -jar backend/target/*.jar
