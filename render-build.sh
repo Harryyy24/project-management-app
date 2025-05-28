@@ -1,3 +1,6 @@
 #!/bin/bash
+# Make mvnw executable
+chmod +x mvnw
+
 # Build the application
-mvn clean package -DskipTests
+./mvnw clean package -DskipTests
