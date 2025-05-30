@@ -3,8 +3,6 @@ services:
     name: project-management-backend
     runtime: docker
     rootDir: backend
-    buildCommand: ./mvnw package -DskipTests
-    startCommand: java -jar target/project-management-app-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
     plan: free
     envVars:
       - key: SPRING_PROFILES_ACTIVE
