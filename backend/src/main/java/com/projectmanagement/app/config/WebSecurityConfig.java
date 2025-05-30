@@ -105,7 +105,7 @@ public class WebSecurityConfig {
         // Allow all origins instead of specific ones
         configuration.addAllowedOrigin("*");
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token", "Authorization", "Content-Type", "Access-Control-Allow-Origin"));
+        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token", "Authorization", "Content-Type", "Access-Control-Allow-Origin", "Origin", "Accept"));
         configuration.setExposedHeaders(Arrays.asList("x-auth-token", "Authorization"));
         // Cannot use allowCredentials with allowedOrigin="*"
         configuration.setAllowCredentials(false);
