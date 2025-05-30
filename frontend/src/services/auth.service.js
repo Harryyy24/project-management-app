@@ -8,8 +8,6 @@ class AuthService {
       .post(API_URL + "signin", {
         username,
         password
-      }, {
-        withCredentials: true  // Important for sending/receiving cookies
       })
       .then(response => {
         if (response.data.token) {
@@ -29,8 +27,6 @@ class AuthService {
       email,
       password,
       fullName
-    }, {
-      withCredentials: true  // Important for sending/receiving cookies
     });
   }
 
