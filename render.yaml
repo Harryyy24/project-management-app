@@ -1,7 +1,7 @@
 services:
   - type: web
     name: project-management-backend
-    env: java
+    runtime: docker
     rootDir: backend
     buildCommand: ./mvnw package -DskipTests
     startCommand: java -jar target/project-management-app-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
@@ -19,4 +19,3 @@ databases:
   - name: project_management_db
     plan: free
     databaseName: project_management_db
-    user: postgres
