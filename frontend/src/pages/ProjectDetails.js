@@ -19,6 +19,7 @@ const ProjectDetails = () => {
   useEffect(() => {
     fetchProjectData();
     fetchUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchProjectData = async () => {
