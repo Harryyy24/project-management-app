@@ -1,137 +1,97 @@
-import axios from "axios";
-import authService from "./auth.service";
+import http from '../http-common';
 
-// Create axios instance with base URL
-const api = axios.create({
-  baseURL: "/api",
-  headers: {
-    "Content-Type": "application/json"
-  }
-});
-
-// Add request interceptor to add auth token to requests
-api.interceptors.request.use(
-  (config) => {
-    const token = authService.getToken();
-    if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Add response interceptor to handle token expiration
-api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  async (error) => {
-    const originalRequest = error.config;
-    
-    // If error is 401 (Unauthorized) and not already retrying
-    if (error.response.status === 401 && !originalRequest._retry) {
-      // Log out the user as token is invalid
-      authService.logout();
-      window.location.href = "/login";
-    }
-    
-    return Promise.reject(error);
-  }
-);
+// All API calls will use the configured http client with interceptors
 
 // Project API calls
 const projectService = {
   getAllProjects: () => {
-    return api.get("/projects");
+    return http.get("/api/projects");
   },
   
   getUserProjects: () => {
-    return api.get("/projects/user");
+    return http.get("/api/projects/user");
   },
   
   getProjectById: (id) => {
-    return api.get(`/projects/${id}`);
+    return http.get(`/api/projects/${id}`);
   },
   
   createProject: (projectData) => {
-    return api.post("/projects", projectData);
+    return http.post("/api/projects", projectData);
   },
   
   updateProject: (id, projectData) => {
-    return api.put(`/projects/${id}`, projectData);
+    return http.put(`/api/projects/${id}`, projectData);
   },
   
   deleteProject: (id) => {
-    return api.delete(`/projects/${id}`);
+    return http.delete(`/api/projects/${id}`);
   },
   
   addMemberToProject: (projectId, userId) => {
-    return api.post(`/projects/${projectId}/members/${userId}`);
+    return http.post(`/api/projects/${projectId}/members/${userId}`);
   },
   
   removeMemberFromProject: (projectId, userId) => {
-    return api.delete(`/projects/${projectId}/members/${userId}`);
+    return http.delete(`/api/projects/${projectId}/members/${userId}`);
   }
 };
 
 // Task API calls
 const taskService = {
   getAllTasks: () => {
-    return api.get("/tasks");
+    return http.get("/api/tasks");
   },
   
   getTasksByProject: (projectId) => {
-    return api.get(`/tasks/project/${projectId}`);
+    return http.get(`/api/tasks/project/${projectId}`);
   },
   
   getAssignedTasks: () => {
-    return api.get("/tasks/assigned");
+    return http.get("/api/tasks/assigned");
   },
   
   getTaskById: (id) => {
-    return api.get(`/tasks/${id}`);
+    return http.get(`/api/tasks/${id}`);
   },
   
   createTask: (taskData) => {
-    return api.post("/tasks", taskData);
+    return http.post("/api/tasks", taskData);
   },
   
   updateTask: (id, taskData) => {
-    return api.put(`/tasks/${id}`, taskData);
+    return http.put(`/api/tasks/${id}`, taskData);
   },
   
   deleteTask: (id) => {
-    return api.delete(`/tasks/${id}`);
+    return http.delete(`/api/tasks/${id}`);
   },
   
   updateTaskStatus: (id, status) => {
-    return api.patch(`/tasks/${id}/status?status=${status}`);
+    return http.patch(`/api/tasks/${id}/status`, { status });
   },
   
   updateTaskProgress: (id, progress) => {
-    return api.patch(`/tasks/${id}/progress?progress=${progress}`);
+    return http.patch(`/api/tasks/${id}/progress`, { progress });
   },
   
   assignTask: (id, userId) => {
-    return api.patch(`/tasks/${id}/assign/${userId}`);
+    return http.post(`/api/tasks/${id}/assign`, { userId });
   }
 };
 
 // User API calls
 const userService = {
   getAllUsers: () => {
-    return api.get("/users");
+    return http.get("/api/users");
   },
   
   getUserById: (id) => {
-    return api.get(`/users/${id}`);
+    return http.get(`/api/users/${id}`);
   },
   
   getCurrentUser: () => {
-    return api.get("/users/me");
+    return http.get("/api/users/me");
   }
 };
 

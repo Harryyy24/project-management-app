@@ -37,22 +37,54 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
+            String path = request.getRequestURI();
+            logger.debug("Processing request to: {}", path);
+            
+            // Skip authentication for public endpoints
+            if (path.startsWith("/api/auth/")) {
+                logger.debug("Skipping authentication for public path: {}", path);
+                filterChain.doFilter(request, response);
+                return;
+            }
+            
             String jwt = parseJwt(request);
-            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-                String username = jwtUtils.getUserNameFromJwtToken(jwt);
+            logger.debug("JWT Token: {}", jwt != null ? "[HIDDEN]" : "null");
+            
+            if (jwt != null) {
+                logger.debug("Validating JWT token...");
+                if (jwtUtils.validateJwtToken(jwt)) {
+                    String username = jwtUtils.getUserNameFromJwtToken(jwt);
+                    logger.debug("JWT token is valid for user: {}", username);
 
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    try {
+                        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                        UsernamePasswordAuthenticationToken authentication =
+                                new UsernamePasswordAuthenticationToken(
+                                        userDetails,
+                                        null,
+                                        userDetails.getAuthorities());
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                        logger.debug("User '{}' authenticated successfully", username);
+                    } catch (Exception e) {
+                        logger.error("Error loading user details: {}", e.getMessage(), e);
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: User not found");
+                        return;
+                    }
+                } else {
+                    logger.warn("JWT token validation failed");
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Invalid token");
+                    return;
+                }
+            } else {
+                logger.debug("No JWT token found in request");
+                // Don't block the request here, let the controller's @PreAuthorize handle it
             }
         } catch (Exception e) {
-            logger.error("Cannot set user authentication: {}", e.getMessage());
+            logger.error("Authentication error: {}", e.getMessage(), e);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred during authentication");
+            return;
         }
 
         filterChain.doFilter(request, response);

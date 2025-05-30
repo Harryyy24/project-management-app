@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 
+// Axios setup with interceptors
+import './setupAxios';
+
 // Pages
 import Login from './pages/Login';
 import Register from './pages/Register';

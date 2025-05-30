@@ -1,13 +1,15 @@
-import axios from "axios";
+import http from "../http-common";
 
 const API_URL = "/api/auth/";
 
 class AuthService {
   login(username, password) {
-    return axios
+    return http
       .post(API_URL + "signin", {
         username,
         password
+      }, {
+        withCredentials: true  // Important for sending/receiving cookies
       })
       .then(response => {
         if (response.data.token) {
@@ -22,11 +24,13 @@ class AuthService {
   }
 
   register(username, email, password, fullName) {
-    return axios.post(API_URL + "signup", {
+    return http.post(API_URL + "signup", {
       username,
       email,
       password,
       fullName
+    }, {
+      withCredentials: true  // Important for sending/receiving cookies
     });
   }
 
@@ -41,7 +45,7 @@ class AuthService {
 
   getToken() {
     const user = this.getCurrentUser();
-    return user?.token;
+    return user?.token || user?.accessToken;
   }
 }
 
