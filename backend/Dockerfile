@@ -21,32 +21,14 @@ EXPOSE 8080
 
 # Create startup script
 RUN echo '#!/bin/bash\n\
-# Extract database connection info from DATABASE_URL\n\
-if [ -n "$DATABASE_URL" ]; then\n\
-  # Parse the URL\n\
-  REGEX="postgresql://([^:]+):([^@]+)@([^:]+):([^/]+)/(.*)"\n\
-  if [[ $DATABASE_URL =~ $REGEX ]]; then\n\
-    DB_USER="${BASH_REMATCH[1]}"\n\
-    DB_PASS="${BASH_REMATCH[2]}"\n\
-    DB_HOST="${BASH_REMATCH[3]}"\n\
-    DB_PORT="${BASH_REMATCH[4]}"\n\
-    DB_NAME="${BASH_REMATCH[5]}"\n\
-    # Build the JDBC URL\n\
-    JDBC_URL="jdbc:postgresql://$DB_HOST:$DB_PORT/$DB_NAME"\n\
-    echo "Connecting to: $JDBC_URL"\n\
-    # Run the application with the parsed connection details\n\
-    exec java -jar app.jar --spring.profiles.active=prod \\\n\
-              --spring.datasource.url=$JDBC_URL \\\n\
-              --spring.datasource.username=$DB_USER \\\n\
-              --spring.datasource.password=$DB_PASS\n\
-  else\n\
-    echo "Invalid DATABASE_URL format"\n\
-    exit 1\n\
-  fi\n\
-else\n\
-  echo "DATABASE_URL not set"\n\
-  exec java -jar app.jar --spring.profiles.active=prod\n\
-fi' > /app/start.sh
+# Print environment variables for debugging (without revealing secrets)\n\
+echo "Checking database connection variables..."\n\
+\n\
+# Use environment variables for database connection\n\
+exec java -jar app.jar --spring.profiles.active=prod \\\n\
+          --spring.datasource.url="jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}" \\\n\
+          --spring.datasource.username="${DB_USER}" \\\n\
+          --spring.datasource.password="${DB_PASSWORD}"' > /app/start.sh
 
 RUN chmod +x /app/start.sh
 

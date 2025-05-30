@@ -11,15 +11,23 @@ services:
         generateValue: true
       - key: PORT
         value: 8080
-      - key: DATABASE_URL
+      - key: DB_HOST
         fromDatabase:
           name: project_management_db
-          property: connectionString
-      - key: POSTGRES_USER
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: project_management_db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: project_management_db
+          property: database
+      - key: DB_USER
         fromDatabase:
           name: project_management_db
           property: user
-      - key: POSTGRES_PASSWORD
+      - key: DB_PASSWORD
         fromDatabase:
           name: project_management_db
           property: password
