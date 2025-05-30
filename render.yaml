@@ -11,6 +11,18 @@ services:
         generateValue: true
       - key: PORT
         value: 8080
+      - key: JDBC_DATABASE_URL
+        fromDatabase:
+          name: project_management_db
+          property: connectionString
+      - key: JDBC_DATABASE_USERNAME
+        fromDatabase:
+          name: project_management_db
+          property: user
+      - key: JDBC_DATABASE_PASSWORD
+        fromDatabase:
+          name: project_management_db
+          property: password
     autoDeploy: true
 
 databases:
