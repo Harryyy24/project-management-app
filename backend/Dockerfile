@@ -23,12 +23,20 @@ EXPOSE 8080
 RUN echo '#!/bin/bash\n\
 # Print environment variables for debugging (without revealing secrets)\n\
 echo "Checking database connection variables..."\n\
+echo "DB_HOST: ${DB_HOST}"\n\
+echo "DB_PORT: ${DB_PORT}"\n\
+echo "DB_NAME: ${DB_NAME}"\n\
 \n\
 # Use environment variables for database connection\n\
 exec java -jar app.jar --spring.profiles.active=prod \\\n\
           --spring.datasource.url="jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}" \\\n\
           --spring.datasource.username="${DB_USER}" \\\n\
-          --spring.datasource.password="${DB_PASSWORD}"' > /app/start.sh
+          --spring.datasource.password="${DB_PASSWORD}" \\\n\
+          --spring.datasource.driver-class-name=org.postgresql.Driver \\\n\
+          --spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect \\\n\
+          --spring.jpa.hibernate.ddl-auto=update \\\n\
+          --spring.jpa.properties.hibernate.temp.use_jdbc_metadata_defaults=false \\\n\
+          --spring.datasource.hikari.maximum-pool-size=5' > /app/start.sh
 
 RUN chmod +x /app/start.sh
 
