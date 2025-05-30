@@ -102,16 +102,13 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(
-            "http://localhost:3000", 
-            "http://127.0.0.1:3000",
-            "https://*.vercel.app",  // Allow all Vercel subdomains
-            "${FRONTEND_URL:*}"     // Allow configurable frontend URL from env variable
-        ));
+        // Allow all origins instead of specific ones
+        configuration.addAllowedOrigin("*");
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token", "Authorization", "Content-Type"));
+        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token", "Authorization", "Content-Type", "Access-Control-Allow-Origin"));
         configuration.setExposedHeaders(Arrays.asList("x-auth-token", "Authorization"));
-        configuration.setAllowCredentials(true);
+        // Cannot use allowCredentials with allowedOrigin="*"
+        configuration.setAllowCredentials(false);
         configuration.setMaxAge(3600L);
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
